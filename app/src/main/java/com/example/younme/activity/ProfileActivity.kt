@@ -61,15 +61,14 @@ class ProfileActivity : AppCompatActivity() {
 
         btnMode = findViewById(R.id.btn_mode)
 
-        btnMode.setOnCheckedChangeListener { _, isChecked ->
-            if (btnMode.isChecked) {
+        btnMode.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 btnMode.text = "Dark mode"
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 btnMode.text = "Light mode"
             }
-            recreate()
         }
 
         mAuth = FirebaseAuth.getInstance()

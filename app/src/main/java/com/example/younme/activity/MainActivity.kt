@@ -105,7 +105,8 @@ class MainActivity : AppCompatActivity() {
             editor.putBoolean("isLoggedIn", false)
             editor.apply()
 
-            val i = Intent(this@MainActivity,LoginActivity::class.java)
+            val i = Intent(this@MainActivity, LoginActivity::class.java)
+            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(i)
             finish()
             return true
