@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Hope you enjoy my app"
+        supportActionBar?.title = getString(R.string.hope)
 
         mAuth = FirebaseAuth.getInstance()
         mDbRef = FirebaseDatabase.getInstance().getReference("user")
@@ -113,6 +113,11 @@ class MainActivity : AppCompatActivity() {
         }
         if (item .itemId == R.id.my_acc){
             val i = Intent(this@MainActivity,ProfileActivity::class.java)
+            startActivity(i)
+            return true
+        }
+        if (item .itemId == R.id.setting){
+            val i = Intent(this@MainActivity,SettingsActivity::class.java)
             startActivity(i)
             return true
         }

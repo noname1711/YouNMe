@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YouNMe</string>
+    <string name="enable_dark_mode_title">Chế độ sáng</string>
+    <string name="disable_dark_mode_title">Chế độ tối</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="hope">Mong bạn sẽ thích ứng dụng</string>
+</resources>

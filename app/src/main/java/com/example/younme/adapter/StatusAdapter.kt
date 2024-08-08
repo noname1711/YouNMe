@@ -15,6 +15,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class StatusAdapter(private val statusList: List<Status>) : RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatusViewHolder {
@@ -41,7 +42,7 @@ class StatusAdapter(private val statusList: List<Status>) : RecyclerView.Adapter
         private val btnSend: Button = itemView.findViewById(R.id.btn_send)
 
         fun bind(status: Status) {
-            // Hiển thị nội dung status
+            // Display status content
             txtStatus.text = status.text
 
             // Format timestamp
@@ -49,6 +50,7 @@ class StatusAdapter(private val statusList: List<Status>) : RecyclerView.Adapter
             val formattedTime = sdf.format(Date(status.timestamp ?: 0))
             txtTime.text = formattedTime
 
+            // Load status image if available
             if (status.imageUrl != null) {
                 imgStatus.visibility = View.VISIBLE
                 Glide.with(itemView.context).load(status.imageUrl).into(imgStatus)
@@ -56,26 +58,14 @@ class StatusAdapter(private val statusList: List<Status>) : RecyclerView.Adapter
                 imgStatus.visibility = View.GONE
             }
 
-            // Tải thông tin user
-            val userDatabase = FirebaseDatabase.getInstance().getReference("user")
-            status.uid?.let { uid ->
-                userDatabase.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val userName = snapshot.child("name").getValue(String::class.java)
-                        val profileImageUrl = snapshot.child("profileImageUrl").getValue(String::class.java)
-                        txtNameStatus.text = userName ?: "Unknown User"
-                        if (profileImageUrl != null) {
-                            Glide.with(itemView.context).load(profileImageUrl).into(imgProfileStatus)
-                        } else {
-                            imgProfileStatus.setImageResource(R.drawable.profile) // Default avatar image
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        txtNameStatus.text = "Unknown User"
-                    }
-                })
+            // Display user information
+            txtNameStatus.text = status.text // assuming status.text contains the user's name after data is loaded
+            if (status.profileImageUrl != null) {
+                Glide.with(itemView.context).load(status.profileImageUrl).into(imgProfileStatus)
+            } else {
+                imgProfileStatus.setImageResource(R.drawable.profile) // Default avatar image
             }
         }
     }
 }
+

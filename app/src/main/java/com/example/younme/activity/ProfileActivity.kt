@@ -2,6 +2,7 @@ package com.example.younme.activity
 
 import android.app.AlertDialog
 import android.content.ContentValues
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -30,7 +31,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var profileImageView: CircleImageView
     private lateinit var btnAvatar: Button
     private lateinit var btnName: Button
-    private lateinit var btnMode : Switch
     private lateinit var mDbRef: DatabaseReference
     private lateinit var mAuth: FirebaseAuth
     private lateinit var storageReference: StorageReference
@@ -54,22 +54,17 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
+        val btnSetting= findViewById<Button>(R.id.btn_setting)
+        btnSetting.setOnClickListener{
+            val i = Intent(this@ProfileActivity,SettingsActivity::class.java)
+            startActivity(i)
+        }
+
         userNameTextView = findViewById(R.id.user_name)
         profileImageView = findViewById(R.id.profile_image)
         btnAvatar = findViewById(R.id.btn_avatar)
         btnName = findViewById(R.id.btn_name)
 
-        btnMode = findViewById(R.id.btn_mode)
-
-        btnMode.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                btnMode.text = "Dark mode"
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                btnMode.text = "Light mode"
-            }
-        }
 
         mAuth = FirebaseAuth.getInstance()
         mDbRef = FirebaseDatabase.getInstance().getReference("user")

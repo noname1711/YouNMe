@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PreferenceScreenStyle" parent="Theme.AppCompat.Light">
+        <item name="android:background">@color/background_color</item> <!-- Sử dụng màu nền sáng cho chế độ sáng -->
+        <item name="android:textColor">@color/text_color</item> <!-- Sử dụng màu chữ sáng cho chế độ sáng -->
+        <!--<item name="android:backgroundTint">@color/background_color</item>   &lt;!&ndash; màu button &ndash;&gt;-->
+    </style>
+    <!-- Kiểu cơ sở cho màn hình tùy chỉnh -->
+    <style name="PreferenceScreenStyles" parent="Theme.AppCompat">
+        <item name="android:background">@color/preference_background_color</item>
+        <item name="android:titleTextStyle">@style/PreferenceTitleTextStyle</item>
+    </style>
+
+    <!-- Kiểu chữ cho tiêu đề -->
+    <style name="PreferenceTitleTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/title_text_color</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <!-- Màu nền cho màn hình tùy chỉnh -->
+    <color name="preference_background_color">#FFFFFF</color>
+    <color name="title_text_color">#000000</color>
+</resources>

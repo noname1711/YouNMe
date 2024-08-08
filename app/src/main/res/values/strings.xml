@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">YouNMe</string>
+    <string name="enable_dark_mode_title">Light Mode</string>
+    <string name="disable_dark_mode_title">Dark Mode</string>
+    <string name="language">Language</string>
+    <string name="hope">Hope you enjoy my app</string>
+    <string-array name="language_options">
+        <item>English</item>
+        <item>Vietnamese</item>
+    </string-array>
+    <string-array name="language_values">
+        <item>en</item>
+        <item>vi</item>
+    </string-array>
 </resources>

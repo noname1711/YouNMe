@@ -17,6 +17,7 @@ import com.example.younme.adapter.Status
 import com.example.younme.adapter.StatusAdapter
 import com.example.younme.adapter.User
 import com.example.younme.login.LoginActivity
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -106,31 +107,40 @@ class StatusActivity : AppCompatActivity() {
                 statusList.clear()
                 val userDbRef = mDbRefUser
 
+                val statusesToLoad = mutableListOf<Status>()
+                val userFetches = mutableListOf<DatabaseReference>()
+
                 for (statusSnapshot in snapshot.children) {
                     val status = statusSnapshot.getValue(Status::class.java)
                     status?.let {
                         val uid = it.uid
                         if (uid != null) {
-                            userDbRef.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(userSnapshot: DataSnapshot) {
-                                    val user = userSnapshot.getValue(User::class.java)
-                                    if (user != null) {
-                                        it.profileImageUrl = user.profileImageUrl
-                                        it.text = user.name // Optional: Nếu muốn hiển thị tên người dùng trong status
-                                    }
-                                    statusList.add(it)
-                                    statusAdapter.notifyDataSetChanged()
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                    // Handle possible errors
-                                }
-                            })
+                            userFetches.add(userDbRef.child(uid))
+                            statusesToLoad.add(it)
                         } else {
                             statusList.add(it)
-                            statusAdapter.notifyDataSetChanged()
                         }
                     }
+                }
+
+                if (userFetches.isNotEmpty()) {
+                    val tasks = userFetches.map { it.get() }
+                    Tasks.whenAllComplete(tasks).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            for (i in statusesToLoad.indices) {
+                                val userSnapshot = tasks[i].result
+                                val user = userSnapshot?.getValue(User::class.java)
+                                if (user != null) {
+                                    statusesToLoad[i].profileImageUrl = user.profileImageUrl
+                                    statusesToLoad[i].text = user.name
+                                }
+                            }
+                        }
+                        statusList.addAll(statusesToLoad)
+                        statusAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    statusAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -139,6 +149,7 @@ class StatusActivity : AppCompatActivity() {
             }
         })
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
@@ -160,6 +171,11 @@ class StatusActivity : AppCompatActivity() {
         }
         if (item.itemId == R.id.my_acc) {
             val i = Intent(this@StatusActivity, ProfileActivity::class.java)
+            startActivity(i)
+            return true
+        }
+        if (item .itemId == R.id.setting){
+            val i = Intent(this@StatusActivity,SettingsActivity::class.java)
             startActivity(i)
             return true
         }

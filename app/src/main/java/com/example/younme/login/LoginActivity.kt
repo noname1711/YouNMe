@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.younme.activity.MainActivity
 import com.example.younme.R
 import com.google.firebase.auth.FirebaseAuth
@@ -60,16 +61,37 @@ class LoginActivity : AppCompatActivity() {
         mAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    showPasswordDialog()
+                } else {
+                    Toast.makeText(this@LoginActivity, "User does not exist", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private fun showPasswordDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_password, null)
+        val edtDialogPassword = dialogView.findViewById<EditText>(R.id.edtDialogPassword)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Enter Password")
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+                val enteredPassword = edtDialogPassword.text.toString()
+                if (enteredPassword == "Hung dz") {
                     val editor = sharedPreferences.edit()
                     editor.putBoolean("isLoggedIn", true)
                     editor.apply()
 
-                    val i= Intent(this@LoginActivity, MainActivity::class.java)
+                    val i = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(i)
                     finish()
                 } else {
-                    Toast.makeText(this@LoginActivity,"User does not exist",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Incorrect Password", Toast.LENGTH_SHORT).show()
                 }
             }
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.show()
     }
 }

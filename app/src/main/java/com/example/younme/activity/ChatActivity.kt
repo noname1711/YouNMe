@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.younme.R
@@ -70,14 +71,18 @@ class ChatActivity : AppCompatActivity() {
 
 
         sendButton.setOnClickListener{
-            val message = messageBox.text.toString()
-            val messageObject = Message(message,senderUid)
+            val message = messageBox.text.toString().trim()
+            if (message.isEmpty()) {
+                Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show()
+            } else {
+                val messageObject = Message(message, senderUid)
 
-            mDbRef.child("chats").child(senderRoom!!).child("messages").push().setValue(messageObject).addOnSuccessListener {
-                mDbRef.child("chats").child(receiverRoom!!).child("messages").push().setValue(messageObject)
+                mDbRef.child("chats").child(senderRoom!!).child("messages").push().setValue(messageObject)
+                    .addOnSuccessListener {
+                        mDbRef.child("chats").child(receiverRoom!!).child("messages").push().setValue(messageObject)
+                    }
+                messageBox.setText("")
             }
-            messageBox.setText("")
-
         }
     }
 }
