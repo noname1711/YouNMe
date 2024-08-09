@@ -17,6 +17,7 @@ import com.example.younme.adapter.Status
 import com.example.younme.adapter.StatusAdapter
 import com.example.younme.adapter.User
 import com.example.younme.login.LoginActivity
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -55,9 +56,8 @@ class StatusActivity : AppCompatActivity() {
         mDbRefStatus = FirebaseDatabase.getInstance().getReference("status")
         mDbRefUser = FirebaseDatabase.getInstance().getReference("user")
         profileImageView = findViewById(R.id.profile_image)
-        loadUserProfile()
 
-        // Load statuses
+        loadUserProfile()
         loadStatuses()
 
         val txtThink = findViewById<TextView>(R.id.txtThink)
@@ -105,38 +105,48 @@ class StatusActivity : AppCompatActivity() {
         mDbRefStatus.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 statusList.clear()
-                val userDbRef = mDbRefUser
 
                 val statusesToLoad = mutableListOf<Status>()
-                val userFetches = mutableListOf<DatabaseReference>()
+                val userFetches = mutableListOf<Task<DataSnapshot>>()
+                val uidToUserMap = mutableMapOf<String, User>()
 
+                // Collect status and user data
                 for (statusSnapshot in snapshot.children) {
-                    val status = statusSnapshot.getValue(Status::class.java)
-                    status?.let {
-                        val uid = it.uid
-                        if (uid != null) {
-                            userFetches.add(userDbRef.child(uid))
-                            statusesToLoad.add(it)
-                        } else {
-                            statusList.add(it)
+                    for (statusIdSnapshot in statusSnapshot.children) {
+                        val status = statusIdSnapshot.getValue(Status::class.java)
+                        status?.let {
+                            val uid = it.uid
+                            if (uid != null) {
+                                userFetches.add(mDbRefUser.child(uid).get())
+                                statusesToLoad.add(it)
+                            }
                         }
                     }
                 }
 
                 if (userFetches.isNotEmpty()) {
-                    val tasks = userFetches.map { it.get() }
-                    Tasks.whenAllComplete(tasks).addOnCompleteListener { task ->
+                    Tasks.whenAllComplete(userFetches).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            for (i in statusesToLoad.indices) {
-                                val userSnapshot = tasks[i].result
+                            // Map user data to UID
+                            for (i in userFetches.indices) {
+                                val userSnapshot = userFetches[i].result
                                 val user = userSnapshot?.getValue(User::class.java)
-                                if (user != null) {
-                                    statusesToLoad[i].profileImageUrl = user.profileImageUrl
-                                    statusesToLoad[i].text = user.name
+                                user?.let {
+                                    uidToUserMap[user.uid ?: ""] = user
                                 }
                             }
+                            // Update statuses with user names and profile images
+                            for (status in statusesToLoad) {
+                                val user = uidToUserMap[status.uid ?: ""]
+                                if (user != null) {
+                                    status.textStatus = status.textStatus // Keep status text as is
+                                    status.profileImageUrl = user.profileImageUrl // Set profile image URL
+                                    // Assuming you want to show user name in place of UID
+                                    status.uid = user.name // Replace UID with user name
+                                }
+                            }
+                            statusList.addAll(statusesToLoad)
                         }
-                        statusList.addAll(statusesToLoad)
                         statusAdapter.notifyDataSetChanged()
                     }
                 } else {
@@ -150,40 +160,38 @@ class StatusActivity : AppCompatActivity() {
         })
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.logout) {
-            mAuth.signOut()
-            val editor = sharedPreferences.edit()
-            editor.putBoolean("isLoggedIn", false)
-            editor.apply()
+        return when (item.itemId) {
+            R.id.logout -> {
+                mAuth.signOut()
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("isLoggedIn", false)
+                editor.apply()
 
-            val i = Intent(this@StatusActivity, LoginActivity::class.java)
-            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(i)
-            finish()
-            return true
+                val i = Intent(this@StatusActivity, LoginActivity::class.java)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(i)
+                finish()
+                true
+            }
+            R.id.my_acc -> {
+                startActivity(Intent(this@StatusActivity, ProfileActivity::class.java))
+                true
+            }
+            R.id.setting -> {
+                startActivity(Intent(this@StatusActivity, SettingsActivity::class.java))
+                true
+            }
+            R.id.connect -> {
+                startActivity(Intent(this@StatusActivity, AboutActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        if (item.itemId == R.id.my_acc) {
-            val i = Intent(this@StatusActivity, ProfileActivity::class.java)
-            startActivity(i)
-            return true
-        }
-        if (item .itemId == R.id.setting){
-            val i = Intent(this@StatusActivity,SettingsActivity::class.java)
-            startActivity(i)
-            return true
-        }
-        if (item.itemId == R.id.connect) {
-            val i = Intent(this@StatusActivity, AboutActivity::class.java)
-            startActivity(i)
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

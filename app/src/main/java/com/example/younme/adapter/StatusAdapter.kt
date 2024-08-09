@@ -18,54 +18,55 @@ import java.util.*
 
 class StatusAdapter(private val statusList: List<Status>) : RecyclerView.Adapter<StatusAdapter.StatusViewHolder>() {
 
+    inner class StatusViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imgProfileStatus: CircleImageView = itemView.findViewById(R.id.img_profileStatus)
+        val txtNameStatus: TextView = itemView.findViewById(R.id.txtNameStatus)
+        val txtStatus: TextView = itemView.findViewById(R.id.txtStatus)
+        val imgStatus: ImageView = itemView.findViewById(R.id.imgStatus)
+        val txtTime: TextView = itemView.findViewById(R.id.txtTime)
+        val etComment: EditText = itemView.findViewById(R.id.et_comment)
+        val btnSend: Button = itemView.findViewById(R.id.btn_send)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatusViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.status_form, parent, false)
-        return StatusViewHolder(itemView)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.status_form, parent, false)
+        return StatusViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: StatusViewHolder, position: Int) {
         val status = statusList[position]
-        holder.bind(status)
-    }
 
-    override fun getItemCount(): Int {
-        return statusList.size
-    }
+        // Load profile image using Glide
+        Glide.with(holder.itemView.context)
+            .load(status.profileImageUrl)
+            .into(holder.imgProfileStatus)
 
-    class StatusViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imgProfileStatus: CircleImageView = itemView.findViewById(R.id.img_profileStatus)
-        private val txtNameStatus: TextView = itemView.findViewById(R.id.txtNameStatus)
-        private val txtStatus: TextView = itemView.findViewById(R.id.txtStatus)
-        private val imgStatus: ImageView = itemView.findViewById(R.id.imgStatus)
-        private val txtTime: TextView = itemView.findViewById(R.id.txtTime)
-        private val etComment: EditText = itemView.findViewById(R.id.et_comment)
-        private val btnSend: Button = itemView.findViewById(R.id.btn_send)
+        // Set UID as user name (if you need to fetch actual user name, you'll need to fetch from Firebase Auth or another source)
+        holder.txtNameStatus.text = status.uid
 
-        fun bind(status: Status) {
-            // Display status content
-            txtStatus.text = status.text
+        // Set other status details
+        holder.txtStatus.text = status.textStatus
 
-            // Format timestamp
-            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            val formattedTime = sdf.format(Date(status.timestamp ?: 0))
-            txtTime.text = formattedTime
+        // Load status image if available
+        if (status.imageUrl != null) {
+            Glide.with(holder.itemView.context)
+                .load(status.imageUrl)
+                .into(holder.imgStatus)
+        } else {
+            holder.imgStatus.visibility = View.GONE // Hide image view if no image
+        }
 
-            // Load status image if available
-            if (status.imageUrl != null) {
-                imgStatus.visibility = View.VISIBLE
-                Glide.with(itemView.context).load(status.imageUrl).into(imgStatus)
-            } else {
-                imgStatus.visibility = View.GONE
-            }
+        // Format and set timestamp
+        status.timestamp?.let {
+            val dateFormat = SimpleDateFormat("HH:mm, dd/MM/yyyy", Locale.getDefault())
+            holder.txtTime.text = dateFormat.format(Date(it))
+        }
 
-            // Display user information
-            txtNameStatus.text = status.text // assuming status.text contains the user's name after data is loaded
-            if (status.profileImageUrl != null) {
-                Glide.with(itemView.context).load(status.profileImageUrl).into(imgProfileStatus)
-            } else {
-                imgProfileStatus.setImageResource(R.drawable.profile) // Default avatar image
-            }
+        // Handle comments and send button actions
+        holder.btnSend.setOnClickListener {
+            // Handle send comment action
         }
     }
-}
 
+    override fun getItemCount(): Int = statusList.size
+}
