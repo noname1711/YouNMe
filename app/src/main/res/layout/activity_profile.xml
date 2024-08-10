@@ -33,7 +33,7 @@
         android:layout_marginTop="10dp"
         android:backgroundTint="#ffffff"
         android:drawableStart="@drawable/ic_camera"
-        android:text="Change your avatar" />
+        android:text="@string/change_avatar" />
 
     <Button
         android:id="@+id/btn_name"
@@ -42,7 +42,7 @@
         android:drawableStart="@drawable/ic_name"
         android:backgroundTint="#ffffff"
         android:layout_marginTop="5dp"
-        android:text="Change your name" />
+        android:text="@string/change_your_name" />
 
     <Button
         android:id="@+id/btn_setting"
@@ -51,7 +51,6 @@
         android:drawableStart="@drawable/ic_setting"
         android:backgroundTint="#ffffff"
         android:layout_marginTop="5dp"
-        android:text="Settings" />
-
+        android:text="@string/setting" />
 
 </LinearLayout>

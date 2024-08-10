@@ -4,7 +4,7 @@
     android:background="#000000">
 
     <PreferenceCategory
-        android:title="Settings">
+        android:title="@string/setting">
 
         <ListPreference
             android:key="language_preference"
@@ -17,5 +17,18 @@
             android:key="dark_mode_preference"
             android:title="@string/enable_dark_mode_title" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Do lười chỉnh lại layout nên dark mode chỉ ">
+
+        <PreferenceCategory
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:title="có tác dụng ở about app/về ứng dụng =))">
+
+        </PreferenceCategory>
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

@@ -4,9 +4,49 @@
     <string name="disable_dark_mode_title">Dark Mode</string>
     <string name="language">Language</string>
     <string name="hope">Hope you enjoy my app</string>
+    <string name="acc">My account</string>
+    <string name="setting">Settings</string>
+    <string name="about">About app</string>
+    <string name="logout">Log out</string>
+    <string name="empty">Message cannot be empty</string>
+    <string name="upload">Uploading...</string>
+    <string name="failupload">Failed to load profile</string>
+    <string name="takephoto">Take Photo</string>
+    <string name="choosephoto">Choose from Gallery</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose_profile_pic">Choose your avatar</string>
+    <string name="post_status_suc">Status posted successfully</string>
+    <string name="post_status_fail">Failed to post status</string>
+    <string name="post_image_fail">Failed to upload image</string>
+    <string name="fail_url_profile_image">Failed to retrieve user profile image URL</string>
+    <string name="enter_name">Enter new name</string>
+    <string name="change_name">Change Name</string>
+    <string name="update_name">Name updated successfully</string>
+    <string name="update_name_fail">Failed to update name</string>
+    <string name="upload_image_suc">Avatar uploaded successfully</string>
+    <string name="upload_image_fail">Avatar upload failed</string>
+    <string name="fail_load_status">Failed to load statuses</string>
+    <string name="fail_load_comments">Failed to load comments</string>
+    <string name="year">years ago</string>
+    <string name="day">days ago</string>
+    <string name="month">months ago</string>
+    <string name="hour">hours ago</string>
+    <string name="minute">minutes ago</string>
+    <string name="second">seconds ago</string>
+    <string name="now">Now</string>
+    <string name="type">Type a message...</string>
+    <string name="your_mind">What is on your mind?</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="post">Post</string>
+    <string name="change_avatar">Change your avatar</string>
+    <string name="change_your_name">Change your name</string>
+    <string name="write_comment">Write a comment...</string>
+    <string name="send">Send</string>
+    <string name="chat">Chat</string>
+    <string name="status">Status</string>
     <string-array name="language_options">
         <item>English</item>
-        <item>Vietnamese</item>
+        <item>Tiếng Việt</item>
     </string-array>
     <string-array name="language_values">
         <item>en</item>

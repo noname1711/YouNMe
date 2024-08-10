@@ -72,22 +72,33 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Write a comment..."
+            android:hint="@string/write_comment"
             android:padding="10dp"
-            android:inputType="textCapSentences"
+            android:inputType="textCapSentences|textMultiLine"
             android:textColor="#000000"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:minLines="1"
+            android:gravity="top" />
 
         <Button
             android:id="@+id/btn_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Send"
+            android:text="@string/send"
             android:textColor="#FFFFFF"
             android:background="@drawable/back_sent"
             android:padding="10dp" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/commentsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp" />
 
     <View
         android:layout_width="match_parent"

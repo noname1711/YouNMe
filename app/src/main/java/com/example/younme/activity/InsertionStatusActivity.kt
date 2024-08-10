@@ -74,7 +74,7 @@ class InsertionStatusActivity : AppCompatActivity() {
         storageReference = FirebaseStorage.getInstance().reference
 
         progressDialog = ProgressDialog(this).apply {
-            setMessage("Uploading...")
+            setMessage(R.string.upload.toString())
             setCancelable(false)
         }
 
@@ -103,32 +103,33 @@ class InsertionStatusActivity : AppCompatActivity() {
                     profileImageView.setImageResource(R.drawable.profile) // Default avatar image
                 }
             }.addOnFailureListener {
-                Toast.makeText(this, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.failupload, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Choose your profile picture")
+        val options = arrayOf(getString(R.string.takephoto), getString(R.string.choosephoto), getString(R.string.cancel))
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.choose_profile_pic)
         builder.setItems(options) { dialog, item ->
-            when {
-                options[item] == "Take Photo" -> {
+            when (options[item]) {
+                getString(R.string.takephoto) -> {
                     val photoUri = createImageUri()
                     selectedImageUri = photoUri
                     captureImage.launch(photoUri)
                 }
-                options[item] == "Choose from Gallery" -> {
+                getString(R.string.choosephoto) -> {
                     pickImage.launch("image/*")
                 }
-                options[item] == "Cancel" -> {
+                getString(R.string.cancel) -> {
                     dialog.dismiss()
                 }
             }
         }
         builder.show()
     }
+
 
     private fun createImageUri(): Uri? {
         val resolver = contentResolver
@@ -164,27 +165,18 @@ class InsertionStatusActivity : AppCompatActivity() {
                                 )
                                 mDbRefStatus.child(userId).push().setValue(status)
                                     .addOnSuccessListener {
-                                        Toast.makeText(
-                                            this,
-                                            "Status posted successfully",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(this, R.string.post_status_suc, Toast.LENGTH_SHORT).show()
                                         progressDialog.dismiss()
-                                        finish() // Close activity after posting
+                                        finish()
                                     }
                                     .addOnFailureListener {
-                                        Toast.makeText(
-                                            this,
-                                            "Failed to post status",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(this, R.string.post_status_fail, Toast.LENGTH_SHORT).show()
                                         progressDialog.dismiss()
                                     }
                             }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(this, R.string.post_image_fail, Toast.LENGTH_SHORT).show()
                             progressDialog.dismiss()
                         }
                 } else {
@@ -197,22 +189,17 @@ class InsertionStatusActivity : AppCompatActivity() {
                     )
                     mDbRefStatus.child(userId).push().setValue(status)
                         .addOnSuccessListener {
-                            Toast.makeText(this, "Status posted successfully", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(this, R.string.post_status_suc, Toast.LENGTH_SHORT).show()
                             progressDialog.dismiss()
-                            finish() // Close activity after posting
+                            finish()
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Failed to post status", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this,R.string.post_status_fail, Toast.LENGTH_SHORT).show()
                             progressDialog.dismiss()
                         }
                 }
             }.addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    "Failed to retrieve user profile image URL",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, R.string.fail_url_profile_image, Toast.LENGTH_SHORT).show()
                 progressDialog.dismiss()
             }
         }

@@ -12,6 +12,14 @@ import java.util.Locale
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Kiểm tra cài đặt chế độ tối từ SharedPreferences
+        val sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE)
+        val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
         supportFragmentManager
             .beginTransaction()
             .replace(android.R.id.content, SettingsFragment())
@@ -33,15 +41,20 @@ class SettingsActivity : AppCompatActivity() {
             darkModePreference = findPreference("dark_mode_preference")!!
             darkModePreference.setOnPreferenceChangeListener { _, newValue ->
                 val isDarkMode = newValue as Boolean
+                // Lưu cài đặt chế độ tối vào SharedPreferences
+                val sharedPreferences = requireActivity().getSharedPreferences("settings", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("dark_mode", isDarkMode)
+                editor.apply()
+
                 AppCompatDelegate.setDefaultNightMode(
                     if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
                 )
                 updateDarkModeTitle(isDarkMode)
-                requireActivity().recreate()  // Recreate activity to apply changes
+                requireActivity().recreate()  // reset thay đổi
                 true
             }
-
-            // Initialize the title based on the current state
+            // Đổi title tùy theo chế độ hiện tại
             updateDarkModeTitle(darkModePreference.isChecked)
         }
 
@@ -51,7 +64,7 @@ class SettingsActivity : AppCompatActivity() {
             val config = resources.configuration
             config.setLocale(locale)
             resources.updateConfiguration(config, resources.displayMetrics)
-            activity?.recreate()  // Recreate activity to apply new language
+            activity?.recreate()  // load lại ngôn ngữ
         }
 
         private fun updateDarkModeTitle(isDarkMode: Boolean) {

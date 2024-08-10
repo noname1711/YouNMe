@@ -5,34 +5,34 @@
         android:id="@+id/overflowMenu"
         android:icon="@drawable/ic_3_dots"
         android:title=""
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/my_acc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:title="My account"
+                android:title="@string/acc"
                 android:icon="@drawable/ic_acc"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:title="Settings"
+                android:title="@string/setting"
                 android:icon="@drawable/ic_setting"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:title="About app"
+                android:title="@string/about"
                 android:icon="@drawable/ic_ques"
                 app:showAsAction="never"/>
             <item
                 android:id="@+id/logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:title="Log out"
+                android:title="@string/logout"
                 android:icon="@drawable/ic_logout"
                 app:showAsAction="never"/>
         </menu>

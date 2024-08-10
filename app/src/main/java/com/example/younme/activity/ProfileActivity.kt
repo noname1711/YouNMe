@@ -97,18 +97,18 @@ class ProfileActivity : AppCompatActivity() {
         layout.setPadding(60, 40, 50, 10)
 
         val nameEditText = EditText(this)
-        nameEditText.hint = "Enter new name"
+        nameEditText.hint = getString(R.string.enter_name)
         layout.addView(nameEditText)
 
         AlertDialog.Builder(this)
-            .setTitle("Change Name")
+            .setTitle(R.string.change_name)
             .setView(layout)
             .setPositiveButton("OK") { dialog, _ ->
                 val newName = nameEditText.text.toString()
                 updateUserName(newName)
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -121,35 +121,36 @@ class ProfileActivity : AppCompatActivity() {
             mDbRef.child(userId).child("name").setValue(newName)
                 .addOnSuccessListener {
                     userNameTextView.text = newName
-                    Toast.makeText(this, "Name updated successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.update_name, Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Failed to update name", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.update_name_fail, Toast.LENGTH_SHORT).show()
                 }
         }
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Choose your profile picture")
+        val options = arrayOf(getString(R.string.takephoto), getString(R.string.choosephoto), getString(R.string.cancel))
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.choose_profile_pic)
         builder.setItems(options) { dialog, item ->
-            when {
-                options[item] == "Take Photo" -> {
+            when (options[item]) {
+                getString(R.string.takephoto) -> {
                     val photoUri = createImageUri()
                     captureImage.launch(photoUri)
                     uri = photoUri
                 }
-                options[item] == "Choose from Gallery" -> {
+                getString(R.string.choosephoto) -> {
                     pickImage.launch("image/*")
                 }
-                options[item] == "Cancel" -> {
+                getString(R.string.cancel) -> {
                     dialog.dismiss()
                 }
             }
         }
         builder.show()
     }
+
 
     private fun createImageUri(): Uri? {
         val resolver = contentResolver
@@ -170,14 +171,14 @@ class ProfileActivity : AppCompatActivity() {
                     imageRef.downloadUrl.addOnSuccessListener { imageUrl ->
                         mDbRef.child(userId).child("profileImageUrl").setValue(imageUrl.toString())
                         loadProfileImage(userId)
-                        Toast.makeText(this, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.upload_image_suc, Toast.LENGTH_SHORT).show()
                     }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, R.string.upload_image_fail, Toast.LENGTH_SHORT).show()
                         }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.upload_image_fail, Toast.LENGTH_SHORT).show()
                 }
         }
     }

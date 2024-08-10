@@ -52,7 +52,7 @@
                 android:textStyle="italic"
                 android:layout_marginStart="10dp"
                 android:textColor ="#FF0000"
-                android:text="What's on your mind?" />
+                android:text="@string/your_mind" />
 
         </LinearLayout>
 

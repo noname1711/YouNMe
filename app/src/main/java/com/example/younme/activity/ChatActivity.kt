@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.younme.R
 import com.example.younme.adapter.Message
 import com.example.younme.adapter.MessageAdapter
@@ -16,6 +18,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import de.hdodenhof.circleimageview.CircleImageView
 
 class ChatActivity : AppCompatActivity() {
 
@@ -26,6 +29,9 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messageList: ArrayList<Message>
     private lateinit var mDbRef: DatabaseReference
 
+    private lateinit var profileFriend: CircleImageView
+    private lateinit var tvNameFriend: TextView
+
     var receiverRoom: String? = null
     var senderRoom: String?= null
 
@@ -33,26 +39,29 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-
+        val image = intent.getStringExtra("image")
         val name = intent.getStringExtra("name")
         val receiverUid = intent.getStringExtra("uid")
         val senderUid = FirebaseAuth.getInstance().currentUser?.uid
         mDbRef = FirebaseDatabase.getInstance().getReference()
 
         senderRoom = receiverUid + senderUid
-        receiverRoom = senderUid+ receiverUid
+        receiverRoom = senderUid + receiverUid
 
-        supportActionBar?.title = name
+        profileFriend = findViewById(R.id.profileFriend)
+        tvNameFriend = findViewById(R.id.tvNameFriend)
+
+        tvNameFriend.text = name
+        Glide.with(this).load(image).into(profileFriend)
 
         chatRecyclerView = findViewById(R.id.chatRecyclerView)
         messageBox = findViewById(R.id.messageBox)
         sendButton = findViewById(R.id.sentButton)
         messageList = ArrayList()
-        messageAdapter = MessageAdapter(this,messageList)
+        messageAdapter = MessageAdapter(this, messageList)
 
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
         chatRecyclerView.adapter = messageAdapter
-
 
         mDbRef.child("chats").child(senderRoom!!).child("messages")
             .addValueEventListener(object : ValueEventListener{
@@ -69,11 +78,10 @@ class ChatActivity : AppCompatActivity() {
                 }
             })
 
-
         sendButton.setOnClickListener{
             val message = messageBox.text.toString().trim()
             if (message.isEmpty()) {
-                Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.empty, Toast.LENGTH_SHORT).show()
             } else {
                 val messageObject = Message(message, senderUid)
 

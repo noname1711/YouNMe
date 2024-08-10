@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.younme.R
+import com.example.younme.adapter.Comment
 import com.example.younme.adapter.Status
 import com.example.younme.adapter.StatusAdapter
 import com.example.younme.adapter.User
@@ -39,20 +40,16 @@ class StatusActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_status)
 
-        // Initialize FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance()
 
-        // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
 
-        // Initialize RecyclerView
         statusRecyclerView = findViewById(R.id.rvStatus)
         statusRecyclerView.layoutManager = LinearLayoutManager(this)
         statusList = mutableListOf()
-        statusAdapter = StatusAdapter(statusList)
+        statusAdapter = StatusAdapter(this, statusList) // Chuyển context vào đây
         statusRecyclerView.adapter = statusAdapter
 
-        // Initialize Database Reference
         mDbRefStatus = FirebaseDatabase.getInstance().getReference("status")
         mDbRefUser = FirebaseDatabase.getInstance().getReference("user")
         profileImageView = findViewById(R.id.profile_image)
@@ -68,7 +65,7 @@ class StatusActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Hope you enjoy my app"
+        supportActionBar?.title = getString(R.string.hope)
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.selectedItemId = R.id.navigation_status
@@ -93,10 +90,10 @@ class StatusActivity : AppCompatActivity() {
                 if (profileImageUrl != null) {
                     Glide.with(this).load(profileImageUrl).into(profileImageView)
                 } else {
-                    profileImageView.setImageResource(R.drawable.profile) // Default avatar image
+                    profileImageView.setImageResource(R.drawable.profile) //avatar mặc định
                 }
             }.addOnFailureListener {
-                Toast.makeText(this, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.failupload, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -110,7 +107,7 @@ class StatusActivity : AppCompatActivity() {
                 val userFetches = mutableListOf<Task<DataSnapshot>>()
                 val uidToUserMap = mutableMapOf<String, User>()
 
-                // Collect status and user data
+                // lấy status + data
                 for (statusSnapshot in snapshot.children) {
                     for (statusIdSnapshot in statusSnapshot.children) {
                         val status = statusIdSnapshot.getValue(Status::class.java)
@@ -127,7 +124,7 @@ class StatusActivity : AppCompatActivity() {
                 if (userFetches.isNotEmpty()) {
                     Tasks.whenAllComplete(userFetches).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // Map user data to UID
+                            // Map user lấy UID
                             for (i in userFetches.indices) {
                                 val userSnapshot = userFetches[i].result
                                 val user = userSnapshot?.getValue(User::class.java)
@@ -135,15 +132,15 @@ class StatusActivity : AppCompatActivity() {
                                     uidToUserMap[user.uid ?: ""] = user
                                 }
                             }
-                            // Update statuses with user names and profile images
+                            // Update status
                             for (status in statusesToLoad) {
                                 val user = uidToUserMap[status.uid ?: ""]
                                 if (user != null) {
-                                    status.textStatus = status.textStatus // Keep status text as is
-                                    status.profileImageUrl = user.profileImageUrl // Set profile image URL
-                                    // Assuming you want to show user name in place of UID
-                                    status.uid = user.name // Replace UID with user name
+                                    status.profileImageUrl = user.profileImageUrl
+                                    status.uid = user.name
                                 }
+
+                                loadCommentsForStatus(status)
                             }
                             statusList.addAll(statusesToLoad)
                         }
@@ -155,7 +152,28 @@ class StatusActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@StatusActivity, "Failed to load statuses", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@StatusActivity, R.string.fail_load_status, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun loadCommentsForStatus(status: Status) {
+        val commentsRef = mDbRefStatus.child(status.uid ?: "").child("comments")
+        commentsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val comments = mutableListOf<Comment>()
+                for (commentSnapshot in snapshot.children) {
+                    val comment = commentSnapshot.getValue(Comment::class.java)
+                    if (comment != null) {
+                        comments.add(comment)
+                    }
+                }
+                status.comments = comments
+                statusAdapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@StatusActivity, R.string.fail_load_comments, Toast.LENGTH_SHORT).show()
             }
         })
     }

@@ -3,9 +3,9 @@
     <item
         android:id="@+id/navigation_chat"
         android:icon="@drawable/ic_chat"
-        android:title="Chat" />
+        android:title="@string/chat" />
     <item
         android:id="@+id/navigation_status"
         android:icon="@drawable/ic_status"
-        android:title="Status" />
+        android:title="@string/status" />
 </menu>

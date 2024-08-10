@@ -33,6 +33,7 @@ class UserAdapter(val context: Context, val userList: ArrayList<User>) : Recycle
             val i = Intent(context, ChatActivity::class.java)
             i.putExtra("name", currentUser.name)
             i.putExtra("uid", currentUser.uid)
+            i.putExtra("image",currentUser.profileImageUrl)
             context.startActivity(i)
         }
     }
