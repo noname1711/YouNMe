@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation ("com.github.chrisbanes:PhotoView:2.3.0")    //phóng to ảnh
     implementation ("com.github.bumptech.glide:glide:4.12.0")       //thư viện xử lí ảnh
     implementation("androidx.preference:preference:1.2.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")

@@ -1,6 +1,7 @@
 package com.example.younme.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.younme.R
+import com.example.younme.activity.PhotoActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import de.hdodenhof.circleimageview.CircleImageView
@@ -51,6 +53,13 @@ class StatusAdapter(private val context: Context, private val statusList: List<S
             Glide.with(context)
                 .load(status.imageUrl)
                 .into(holder.imgStatus)
+            holder.imgStatus.setOnClickListener {
+                // Hiển thị hình ảnh phóng to
+                val intent = Intent(context, PhotoActivity::class.java).apply {
+                    putExtra("imageUrl", status.imageUrl)
+                }
+                context.startActivity(intent)
+            }
         } else {
             holder.imgStatus.visibility = View.GONE
         }
@@ -79,7 +88,6 @@ class StatusAdapter(private val context: Context, private val statusList: List<S
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Handle errors
             }
         })
 

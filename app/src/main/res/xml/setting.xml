@@ -28,6 +28,12 @@
             android:title="có tác dụng ở about app/về ứng dụng =))">
 
         </PreferenceCategory>
+        <PreferenceCategory
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:title="Update thêm chỗ phóng to thu nhỏ ảnh =))">
+
+        </PreferenceCategory>
     </PreferenceCategory>
 
 
